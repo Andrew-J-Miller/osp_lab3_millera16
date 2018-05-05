@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<string.h>
+#include<unistd.h>
 
 //falsh.c
 //This is the c implementation of a shell interpreter called the falcon shell
@@ -9,18 +10,24 @@
 
 
 
-int main(int argc, char *agv[])
+int main(int argc, char *argv[])
 {
-	//Check for toom any arguements. if > 2, fails gracefully
+	
+	char *args[] = {"./fshell", NULL};
+
+
+	
+
+	//Check for too many arguements. if > 2, fails gracefully
 	if (argc > 2)
 	{
-		printf("Error, too many arguements");
+		printf("Error, too many arguements\n");
 		return 0;
 	
 	}
 
 	//condition for -h flag passed in, displays options for falsh shell
-	if (strcmp(argv[1], "-h")==0)
+	if (argc == 2 && strcmp(argv[1], "-h") == 0)
 	{
 		printf("falsh shell has the following inbuild commands:\n");
 		printf("exit: exits program\n");
@@ -31,12 +38,16 @@ int main(int argc, char *agv[])
 		return 0;
 	}
 
+	//At this point, the shell itself can be called
+	//It will be a separate C file, fshell.c
+
+	execvp(args[0], args);
+	
 
 
 
 
-
-
+	return 0;
 
 
 }
