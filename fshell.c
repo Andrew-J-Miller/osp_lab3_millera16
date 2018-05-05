@@ -11,11 +11,15 @@
 //will also be able to call local programs and do simple redirection
 
 
+//function for pwd
+//takes a char array containing cwd
+//has no return value
 void pwd(char dir[1024]);
 
+//function for help
+//takes no args
+//has no return value
 void help();
-
-void cd(char dir[1024], char newDir[1024]);
 
 
 int main(int argc, char *argv[])
@@ -41,7 +45,8 @@ int main(int argc, char *argv[])
 		fprintf(stdout, "starting falcon shell. CWD is %s\n", cwd);
 	else //Fail condition for getcwd failure
 		perror("current working directory error\n");
-
+	
+	//default path is just /bin
 	path[0] = "/bin";
 	
 
@@ -56,7 +61,10 @@ int main(int argc, char *argv[])
 		//Get input from stdin
 		getline(&line[0], &n, stdin);
 
-		
+		//remove the newline char from user input
+		strtok(line[0], "\n");
+
+		//Create a temp string identical to trhe line string so it can be used with strtok without erasing the original string
 		tmp = strdup(line[0]);
 	
 
@@ -70,15 +78,17 @@ int main(int argc, char *argv[])
 		
 		for (x = 0; x < strlen(line[0]); x++)
 		{
+			//Search for redirect and proper number of arguements
 			if (line[0][x] == '>' )
 			{
 				if (count == 3)
 				{
+					//enable redirect and close stdout
 					redirect = 1;
 					freopen(args[2], "a+", stdout);
 
 				}
-				else
+				else //condition for redirect but improper arguement number
 				{
 					printf("Can only redirect to one file.\n");
 				}	
@@ -86,19 +96,19 @@ int main(int argc, char *argv[])
 		}
 
 	
-		if (strcmp(args[0], "pwd\n") == 0)
+		if (strcmp(args[0], "pwd") == 0)//run pwd
 		{
 			pwd(cwd);	
 		}
-		else if (strcmp(args[0], "help\n") == 0)
+		else if (strcmp(args[0], "help") == 0)//run help
 		{
 			help();
 		}
-		else if (strcmp(args[0], "exit\n") == 0)
+		else if (strcmp(args[0], "exit") == 0)//run exit
 		{
 			return 0;
 		}
-		else if (strcmp(args[0], "cd") == 0 || strcmp(args[0], "cd\n") == 0)
+		else if (strcmp(args[0], "cd") == 0)//run cd
 		{
 	
 			if (count ==  1)//Default to home directory
@@ -109,22 +119,17 @@ int main(int argc, char *argv[])
 			}
 			else if (count == 2) //Go to directory that was passed in
 			{
-				while(args[1][j] != '\n')
-				{
-					j++;
-				}
-				args[1][j] = '\0';
 				printf("%s\n", args[1]);
 				chdir(args[1]);
 				getcwd(cwd, sizeof(cwd));
 			}
-			else
+			else //condition for > 2 cd args, errors
 				printf("Error. Improper number of arguements\n");
 			
 		}
-		else if (strcmp(args[0], "setpath") == 0 || strcmp(args[0], "setpath\n") == 0)
+		else if (strcmp(args[0], "setpath") == 0)//run setpath
 		{
-			if (count == 1)
+			if (count == 1)//condition for setpath with no directory passed in
 			{
 				printf("Please enter at least one directory\n");
 			}
@@ -150,7 +155,11 @@ int main(int argc, char *argv[])
 		{
 		
 		}
+
+		//end of shell loop. Resets all variables so as to smoothly loop into next command
 		tmp = NULL;
+
+		//resets all string tokens from user input
 		for (i = 0; i < count; i ++)
 		{
 			args[i] = NULL;
@@ -158,6 +167,8 @@ int main(int argc, char *argv[])
 		count = 0;
 		n = 0;
 		i = 0;
+
+		//reopens stdout if it was closed
 		if (redirect == 1)
 		{
 			freopen("/dev/tty", "w", stdout);
@@ -169,12 +180,15 @@ int main(int argc, char *argv[])
 }
 
 
+//prints current working directory
 void pwd(char dir[1024])
 {
 	printf("Current directory is %s\n" , dir);
 	return;
 }
 
+
+//prints all inbuilt commands
 void help()
 {
 	printf("falsh shell has the following inbuilt commands:\n");
@@ -187,10 +201,5 @@ void help()
 }
 
 
-void cd(char dir[1024], char newDir[1024])
-{
-	dir = strdup(newDir);
-	return;
-}
 
 
