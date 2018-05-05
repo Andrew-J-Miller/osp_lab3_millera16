@@ -3,6 +3,8 @@
 #include<errno.h>
 #include<unistd.h>
 #include<string.h>
+#include<sys/types.h>
+#include<sys/wait.h>
 
 //fshell.c
 //This is the actual shell interpreter called by falsh.c
@@ -35,9 +37,10 @@ int main(int argc, char *argv[])
 	char  *env;
 	char *path[100] = {NULL};
 	int i = 0 ;
-	int pathnum = 0;
+	int pathnum = 1;
 	int redirect = 0;
 	size_t x = 0;
+	pid_t cpid;
 
 
 	//Gets current working directory
@@ -152,8 +155,25 @@ int main(int argc, char *argv[])
 			}
 		}
 		else //fork into child process and run from path (or specified directory)
-		{
-		
+		{	
+			//child process
+			if (fork()==0)
+			{
+
+				//Searches all strings in path for program to execute
+				for (i = 0; i < pathnum; i++)
+				{
+					
+				
+				}
+				//If the exec call was unsucessful the child must be ended
+				return 0;
+
+			}
+			else //The parent process must wait for the child
+			{
+				cpid = wait(NULL);		
+			}
 		}
 
 		//end of shell loop. Resets all variables so as to smoothly loop into next command
