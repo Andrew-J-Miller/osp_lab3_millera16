@@ -163,10 +163,16 @@ int main(int argc, char *argv[])
 				//Searches all strings in path for program to execute
 				for (i = 0; i < pathnum; i++)
 				{
-					
+					//Formats string in such a way that it will run the arguement if it is in path
+					execvp(("%s/%s",path[i],args[0]), args);
 				
 				}
+				//Also tries cwd or any directory the user may have passed in
+				execvp(("%s/%s",cwd, args[0]), args);
+				execvp(("%s",args[0]), args);
+
 				//If the exec call was unsucessful the child must be ended
+				printf("Error. Program not found in path or local directory..\n");
 				return 0;
 
 			}
