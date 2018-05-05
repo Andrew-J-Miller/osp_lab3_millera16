@@ -83,10 +83,10 @@ int main(int argc, char *argv[])
 			{
 				if (count == 3)
 				{
-					//enable redirect and close stdout
+					//enable redirect and close stdout and stderr
 					redirect = 1;
-					freopen(args[2], "a+", stdout);
-
+					freopen(("%s.out", args[2]), "a+", stdout);
+					freopen(("%s.err", args[2]), "a+", stderr);
 				}
 				else //condition for redirect but improper arguement number
 				{
@@ -172,6 +172,7 @@ int main(int argc, char *argv[])
 		if (redirect == 1)
 		{
 			freopen("/dev/tty", "w", stdout);
+			freopen("/dev/tty", "w", stderr);
 		}
 		redirect = 0;
 	}
